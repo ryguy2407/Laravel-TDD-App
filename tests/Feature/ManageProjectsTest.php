@@ -19,7 +19,7 @@ class ManageProjectsTest extends TestCase
     {
     	$this->withoutExceptionHandling();
 
-    	$this->actingAs(factory('App\User')->create());
+    	$this->signIn();
         $attributes = [
         	'title' => $this->faker->sentence,
         	'description' => $this->faker->paragraph
@@ -53,14 +53,14 @@ class ManageProjectsTest extends TestCase
 
     public function testProjectRequiresATitle()
     {
-    	$this->actingAs(factory('App\User')->create());
+    	$this->signIn();
     	$attributes = factory('App\Project')->raw(['title' => '']);
     	$this->post('/projects', $attributes)->assertSessionHasErrors('title');
     }
 
     public function testProjectRequiresADescription()
     {
-    	$this->actingAs(factory('App\User')->create());
+    	$this->signIn();
     	$attributes = factory('App\Project')->raw(['description' => '']);
     	$this->post('/projects', [])->assertSessionHasErrors('description');
     }
@@ -69,18 +69,17 @@ class ManageProjectsTest extends TestCase
     {
     	$this->withoutExceptionHandling();
 
-    	$this->be(factory('App\User')->create());
+    	$this->signIn();
 
     	$project = factory('App\Project')->create(['owner_id' => auth()->id()]);
     	$this->get($project->path())
-    		->assertSee($project->title)
-    		->assertSee($project->description);
+    		->assertSee($project->title);    
     }
 
     public function testAnAuthenticatedUserCannotViewOtherProjects()
     {
 
-    	$this->be(factory('App\User')->create());
+    	$this->signIn();
 
     	$project = factory('App\Project')->create();
 
