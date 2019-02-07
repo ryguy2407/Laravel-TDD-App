@@ -23,6 +23,44 @@ class ProjectTasksTest extends TestCase
 			->assertSee('Test task');
 	}
 
+	public function testAProjectCanBeUpdated()
+	{
+		$this->withoutExceptionHandling();
+
+		$this->signIn();
+
+		$project = factory(Project::class)->create(['owner_id' => auth()->id()]);
+
+		$task = $project->addTask('test task');
+
+		$this->patch($project->path() . '/task/' . $task->id, [
+			'body' => 'changed',
+			'completed' => true
+		]);
+
+		$this->assertDatabaseHas('tasks', [
+			'body' => 'changed',
+			'completed' => true
+		]);
+	}
+
+	public function testOnlyTheOwnerOfAProjectMayUpdateTask()
+	{
+		$this->signin();
+		
+		$project = factory(Project::class)->create();
+		
+		$task = $project->addTask('test task');
+		
+		$this->patch($task->path(), [
+			'body' => 'changed',
+			'completed' => true
+		])->assertStatus(403);
+
+		$this->assertDatabaseMissing('tasks', ['body' => 'changed']);
+
+	}
+
 	public function testTaskRequiresABody()
 	{
 		$this->signIn();
