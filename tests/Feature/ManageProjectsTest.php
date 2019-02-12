@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Project;
+use Facades\Tests\Setup\ProjectFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -18,8 +19,6 @@ class ManageProjectsTest extends TestCase
      */
     public function testGuestCannotCreateProjects()
     {
-    	$this->withoutExceptionHandling();
-
     	$this->signIn();
         $attributes = [
         	'title' => $this->faker->sentence,
@@ -43,13 +42,9 @@ class ManageProjectsTest extends TestCase
 
     public function testAUserCanUpdateAProject()
     {
-    	$this->signIn();
+    	$project = ProjectFactory::create();
 
-    	$this->withoutExceptionHandling();
-
-    	$project = factory('App\Project')->create(['owner_id' => auth()->id()]);
-
-    	$this->patch($project->path(), [
+    	$this->actingAs($project->owner)->patch($project->path(), [
     		'notes' => 'changed'
     	])->assertRedirect($project->path());
 
@@ -90,18 +85,13 @@ class ManageProjectsTest extends TestCase
 
     public function testUserCanViewTheirProject()
     {
-    	$this->withoutExceptionHandling();
-
-    	$this->signIn();
-
-    	$project = factory('App\Project')->create(['owner_id' => auth()->id()]);
-    	$this->get($project->path())
+    	$project = ProjectFactory::create();
+    	$this->actingAs($project->owner)->get($project->path())
     		->assertSee($project->title);    
     }
 
     public function testAnAuthenticatedUserCannotViewOtherProjects()
     {
-
     	$this->signIn();
 
     	$project = factory('App\Project')->create();

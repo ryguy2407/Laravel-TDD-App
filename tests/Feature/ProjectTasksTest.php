@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Project;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Facades\Tests\Setup\ProjectFactory;
 use Tests\TestCase;
 
 class ProjectTasksTest extends TestCase
@@ -13,11 +14,9 @@ class ProjectTasksTest extends TestCase
 
 	public function testAProjectCanHaveTasks()
 	{
-		$this->signIn();
+		$project = ProjectFactory::create();
 
-		$project = factory(Project::class)->create(['owner_id' => auth()->id()]);
-
-		$this->post($project->path() . '/task', ['body' => 'Test task']);
+		$this->actingAs($project->owner)->post($project->path() . '/task', ['body' => 'Test task']);
 
 		$this->get($project->path())
 			->assertSee('Test task');
@@ -25,15 +24,10 @@ class ProjectTasksTest extends TestCase
 
 	public function testAProjectCanBeUpdated()
 	{
-		$this->withoutExceptionHandling();
+		$project = ProjectFactory::withTasks(1)->create();
 
-		$this->signIn();
-
-		$project = factory(Project::class)->create(['owner_id' => auth()->id()]);
-
-		$task = $project->addTask('test task');
-
-		$this->patch($project->path() . '/task/' . $task->id, [
+		$this->actingAs($project->owner)
+			->patch($project->tasks->first()->path(), [
 			'body' => 'changed',
 			'completed' => true
 		]);
@@ -47,12 +41,10 @@ class ProjectTasksTest extends TestCase
 	public function testOnlyTheOwnerOfAProjectMayUpdateTask()
 	{
 		$this->signin();
-		
-		$project = factory(Project::class)->create();
-		
-		$task = $project->addTask('test task');
-		
-		$this->patch($task->path(), [
+
+		$project = ProjectFactory::withTasks(1)->create();
+				
+		$this->patch($project->tasks[0]->path(), [
 			'body' => 'changed',
 			'completed' => true
 		])->assertStatus(403);
@@ -63,12 +55,11 @@ class ProjectTasksTest extends TestCase
 
 	public function testTaskRequiresABody()
 	{
-		$this->signIn();
-
-		$project = factory(Project::class)->create(['owner_id' => auth()->id()]);
+		$project = ProjectFactory::create();
 
     	$attributes = factory('App\Task')->raw(['body' => '']);
-    	$this->post($project->path() . '/task', [])->assertSessionHasErrors('body');
+    	
+    	$this->actingAs($project->owner)->post($project->path() . '/task', [])->assertSessionHasErrors('body');
 	}
 
 	public function testOnlyOwnerCanAddTasks()
