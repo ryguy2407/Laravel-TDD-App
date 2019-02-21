@@ -44,11 +44,17 @@ class ManageProjectsTest extends TestCase
     {
     	$project = ProjectFactory::create();
 
-    	$this->actingAs($project->owner)->patch($project->path(), [
-    		'notes' => 'changed'
-    	])->assertRedirect($project->path());
+    	$this->actingAs($project->owner)->patch($project->path(),
+    		$attributes = [
+    			'title' => 'changed', 
+    			'description' => 'changed', 
+    			'notes' => 'changed'
+    		]
+    	)->assertRedirect($project->path());
 
-    	$this->assertDatabaseHas('projects', ['notes' => 'changed']);
+    	$this->get($project->path().'/edit')->assertOk();
+
+    	$this->assertDatabaseHas('projects', $attributes);
 
     }
 
@@ -60,6 +66,12 @@ class ManageProjectsTest extends TestCase
     public function testGuestsMayNotCreateProjects()
     {
     	$this->get('/projects/create')->assertRedirect('login');
+    }
+
+    public function testGuestsMayNotEditProjects()
+    {
+    	$project = ProjectFactory::create();
+    	$this->get($project->path().'/edit')->assertRedirect('login');
     }
 
     public function testGuestsMayNotViewASingleProject()
