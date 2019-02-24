@@ -49,12 +49,12 @@ class ProjectsController extends Controller
     	return redirect($project->path());
     }
 
-    private function validateRequest()
+    protected function validateRequest()
     {
     	return request()->validate([
-    		'title' => 'required', 
-    		'description' => 'required',
-    		'notes' => 'min:3'
+    		'title' => 'sometimes|required', 
+    		'description' => 'sometimes|required',
+    		'notes' => 'nullable'
     	]);
     }
 }

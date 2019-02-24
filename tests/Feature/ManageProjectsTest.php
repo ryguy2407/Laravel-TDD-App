@@ -58,6 +58,20 @@ class ManageProjectsTest extends TestCase
 
     }
 
+    public function testUserCanUpdateGeneralNotes()
+    {
+    	$project = ProjectFactory::create();
+
+    	$this->actingAs($project->owner)->patch($project->path(),
+    		$attributes = [
+    			'notes' => 'changed'
+    		]
+    	)->assertRedirect($project->path());
+
+    	$this->assertDatabaseHas('projects', $attributes);
+    }
+   
+
     public function testGuestsMayNotViewProjects()
     {
     	$this->get('/projects')->assertRedirect('login');
@@ -92,7 +106,7 @@ class ManageProjectsTest extends TestCase
     {
     	$this->signIn();
     	$attributes = factory('App\Project')->raw(['description' => '']);
-    	$this->post('/projects', [])->assertSessionHasErrors('description');
+    	$this->post('/projects', $attributes)->assertSessionHasErrors('description');
     }
 
     public function testUserCanViewTheirProject()
