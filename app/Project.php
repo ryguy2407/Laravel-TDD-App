@@ -4,6 +4,10 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Class Project
+ * @package App
+ */
 class Project extends Model
 {
     protected $guarded = [];
@@ -33,11 +37,8 @@ class Project extends Model
     	return $this->hasMany(Activity::class);
     }
 
-	public function recordActivity($type)
+	public function recordActivity($description)
 	{
-		Activity::create([
-			'project_id' => $this->id,
-			'description' => $type
-		]);
+		$this->activity()->create(['description' => $description]);
 	}
 }
