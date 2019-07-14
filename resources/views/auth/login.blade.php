@@ -12,6 +12,7 @@
                 @csrf
 
                 <div class="field mb-6">
+                    <div class="control">
                     <input id="email" type="email" class="input bg-transparent border border-grey-light rounded p-2 text-xs w-full" name="email" value="" placeholder="Email Address" required autofocus>
 
                         @if ($errors->has('email'))
@@ -19,6 +20,7 @@
                                 <strong>{{ $errors->first('email') }}</strong>
                             </span>
                         @endif
+                    </div>
                 </div>
 
                 <div class="field mb-6">
