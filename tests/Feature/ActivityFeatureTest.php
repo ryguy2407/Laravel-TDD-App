@@ -28,4 +28,28 @@ class ActivityFeatureTest extends TestCase
 		$this->assertCount(2, $project->activity);    
 		$this->assertEquals('updated', $project->activity->last()->description);	
     }
+
+	function test_creating_a_new_task_records_project_activity()
+	{
+		$project = ProjectFactory::create();
+
+		$project->addTask('some task');
+
+		$this->assertCount(2, $project->activity);
+		$this->assertEquals('created_task', $project->activity->last()->description);
+	}
+
+	function test_completing_a_task_records_project_activity()
+	{
+		$project = ProjectFactory::withTasks(1)->create();
+
+		$this->actingAs($project->owner)->patch($project->tasks[0]->path(), [
+			'body' => 'foo',
+			'completed' => true
+		]);
+
+		$this->assertCount(3, $project->activity);
+		$this->assertEquals('completed_task', $project->activity->last()->description);
+
+	}
 }
