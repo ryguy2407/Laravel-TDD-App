@@ -53,7 +53,8 @@ class RecordActivityTest extends TestCase
 
 	}
 
-	function test_incompleting_a_task()
+	/** @test */
+	function incompleting_a_task()
 	{
 		$project = ProjectFactory::withTasks(1)->create();
 
@@ -72,5 +73,15 @@ class RecordActivityTest extends TestCase
 		$this->assertCount(4, $project->fresh()->activity);
 		$this->assertEquals('incompleted_task', $project->fresh()->activity->last()->description);
 
+	}
+
+	/** @test */
+	function deleting_a_task()
+	{
+		$project = ProjectFactory::withTasks(1)->create();
+
+		$project->tasks[0]->delete();
+
+		$this->assertCount(3, $project->activity);
 	}
 }
