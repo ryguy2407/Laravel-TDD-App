@@ -21,11 +21,11 @@ class Task extends Model
 			$task->project->recordActivity('created_task');
 		});
 
-		static::updated(function($task) {
-			if (! $task->completed) return;
-
-			$task->project->recordActivity('completed_task');
-		});
+//		static::updated(function($task) {
+//			if (! $task->completed) return;
+//
+//			$task->project->recordActivity('completed_task');
+//		});
 	}
 
 	public function project()
@@ -41,10 +41,12 @@ class Task extends Model
 	public function completed()
 	{
 		$this->update(['completed' => true]);
+		$this->project->recordActivity('completed_task');
 	}
 
 	public function incomplete()
 	{
 		$this->update(['completed' => false]);
+		$this->project->recordActivity('incompleted_task');
 	}
 }
