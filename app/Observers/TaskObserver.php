@@ -12,9 +12,9 @@ class TaskObserver
      * @param  \App\task  $task
      * @return void
      */
-    public function created(task $task)
+    public function created(Task $task)
     {
-        $task->project->recordActivity('created_task');
+        $task->recordActivity('created_task');
     }
 
     /**
@@ -34,9 +34,9 @@ class TaskObserver
      * @param  \App\task  $task
      * @return void
      */
-    public function deleted(task $task)
+    public function deleted(Task $task)
     {
-        $task->project->recordActivity('deleted_task');
+        $task->recordActivity('deleted_task');
     }
 
     /**
