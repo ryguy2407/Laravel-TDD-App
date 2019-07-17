@@ -1,1 +1,1 @@
-You marked {{ $activity->subject->body }} as incomplete
+You marked "{{ $activity->subject->body }}" as incomplete
