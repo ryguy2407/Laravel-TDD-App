@@ -18,7 +18,7 @@ Route::get('/', function () {
 Route::group(['middleware' => 'auth'], function(){
 	Route::resource('projects', 'ProjectsController');
 
-	Route::post('/projects/{project}/task', 'ProjectTasksController@store');
+	Route::post('/projects/{project}/task', 'ProjectTasksController@store')->name('project.task.store');
 	Route::patch('/projects/{project}/task/{task}', 'ProjectTasksController@update');
 
 	Route::get('/home', 'HomeController@index')->name('home');
