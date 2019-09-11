@@ -167,4 +167,12 @@ class ManageProjectsTest extends TestCase
     	$attributes = factory('App\Project')->raw();
     	$this->post('/projects', $attributes)->assertRedirect('login');
     }
+
+	/** @test */
+	public function a_user_can_see_all_projects_they_have_been_invited_to()
+	{
+		$project = tap(ProjectFactory::create())->invite($this->signIn());
+
+		$this->get('/projects')->assertSee($project->title);
+	}
 }
