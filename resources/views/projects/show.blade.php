@@ -57,12 +57,19 @@
 						<textarea name="notes" class="card w-full mb-4" style="min-height: 200px;" placeholder="Type any other notes or info here...">{{ $project->notes }}</textarea>
 						<button type="submit" class="button">Save</button>
 					</form>
+
+					@include('errors')
 				</div>		
 			</div>
 			<div class="lg:w-1/4 px-3">
 				@include('projects.card')
 
 				@include('projects.activity.card')
+
+				@can('manage', $project)
+					@include('projects.invite')
+				@endcan
+
 			</div>
 		</div>
 	</main>
