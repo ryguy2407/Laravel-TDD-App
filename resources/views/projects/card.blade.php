@@ -10,7 +10,7 @@
 				<form method="POST" action="{{ route('projects.destroy', $project->id) }}" class="text-right">
 					@csrf
 					@method('DELETE')
-					<button type="submit" class="text-xs">Delete</button>
+					<button type="submit" class="text-xs text-default">Delete</button>
 				</form>
 			</footer>
 		@endcan

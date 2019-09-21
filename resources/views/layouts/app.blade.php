@@ -19,7 +19,7 @@
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
-<body class="bg-page theme-dark">
+<body class="bg-page theme-light">
     <div id="app">
         <nav class="bg-header">
             <div class="container mx-auto">
@@ -55,6 +55,9 @@
                                     </li>
                                 @endif
                             @else
+
+                                <theme-switcher></theme-switcher>
+
                                 <img src="{{ gravatar_url(Auth::user()->email) }}" class="w-16 rounded-full">
                                 <li class="nav-item dropdown">
 
